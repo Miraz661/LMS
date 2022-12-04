@@ -364,7 +364,6 @@ class home extends data {
                 }
                 break;
             case "my":
-                String tempBn = "", tempBa = "", tempBp = "", tempBav = "";
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
                 System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
@@ -405,41 +404,174 @@ class home extends data {
                             }
                         }
                     }
+                    try {
+                        FileWriter myFile = new FileWriter("booksInfo.txt");
+                        for (int i = 0; i < bookName.size(); i++) {
+                            myFile.write(bookName.get(i) + "\n");
+                            myFile.write(bookAuthor.get(i) + "\n");
+                            myFile.write(bookPage.get(i) + "\n");
+                            myFile.write(availability.get(i) + "\n");
+                        }
+                        myFile.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                     System.out.print("\033[H\033[2J");
                     System.out.flush();
                     System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
                     System.out.println("\t\t\t\t\t\t\t--- Return Successfully ---");
                     user();
                 }
-                try {
-                    FileWriter bookFile = new FileWriter("temp.txt");
-                    File bookNewFile = new File("booksInfo.txt");
-                    Scanner booksc = new Scanner(bookNewFile);
-                    while (booksc.hasNextLine()) {
-                        String bookn = booksc.next();
-                        String booka = booksc.next();
-                        String bookp = booksc.next();
-                        String bookav = booksc.next();
-                        bookFile.write(bookn + "\n" + booka + "\n" + bookp + "\n" + bookav + "\n");
-                    }
-                    bookFile.close();
-                    booksc.close();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
+
                 break;
             case "books":
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
                 System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                System.out.println("Available Books : ");
+                counter = 0;
+                for (int i = 0; i < bookAuthor.size(); i++) {
+                    if (availability.get(i).compareTo("available") == 0) {
+                        System.out.println(
+                                "\t" + i + " " + bookName.get(i) + " (" + bookPage.get(i) + ")\n\t\""
+                                        + bookAuthor.get(i) + "\"");
+                        counter++;
+                    }
+                }
+                if (counter <= 0) {
+                    System.out.println("\tEmpty.");
+                    System.out.println("Press \"#\" To Go Back.");
+                    System.out.print("Enter Command : ");
+                    choice = input.nextLine();
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                    user();
+                } else {
+                    System.out.println("Press \"#\" To Go Back.");
+                    System.out.println("Enter Book ID To Take It.");
+                    System.out.print("Enter Command : ");
+                    choice = input.nextLine();
+                    if (choice.compareTo("#") == 0) {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                        user();
+                    } else {
+                        for (int i = 0; i < bookName.size(); i++) {
+                            temp = Integer.toString(i);
+                            if (choice.compareTo(temp) == 0) {
+                                availability.set(i, "my");
+                            }
+                        }
+                    }
+                    try {
+                        FileWriter myFile = new FileWriter("booksInfo.txt");
+                        for (int i = 0; i < bookName.size(); i++) {
+                            myFile.write(bookName.get(i) + "\n");
+                            myFile.write(bookAuthor.get(i) + "\n");
+                            myFile.write(bookPage.get(i) + "\n");
+                            myFile.write(availability.get(i) + "\n");
+                        }
+                        myFile.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                    System.out.println("\t\t\t\t\t\t\t    --- Book Added ---");
+                    user();
+                }
                 break;
             case "search":
+                String word;
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
                 System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                System.out.println("Enter Book Name : ");
+                choice = input.nextLine();
+                int indexi = choice.indexOf(" ");
+                if (indexi < 0) {
+                    word = choice;
+                } else {
+                    word = choice.substring(0, indexi);
+                }
+                System.out.println("Books : ");
+                counter = 0;
+                for (int i = 0; i < bookName.size(); i++) {
+                    int booki = bookName.get(i).indexOf(" ");
+                    if (availability.get(i).compareTo("my") != 0) {
+                        if (booki < 0) {
+                            String com = bookName.get(i);
+                            if (word.compareTo(com) == 0) {
+                                counter++;
+                                System.out.println("\t" + i + " " + bookName.get(i) + " (" + bookPage.get(i) + ")\n\t\""
+                                        + bookAuthor.get(i) + "\" " + "<" + availability.get(i) + ">");
+                            }
+                        } else {
+                            String com = bookName.get(i).substring(0, booki);
+                            if (word.compareTo(com) == 0) {
+                                counter++;
+                                System.out.println("\t" + i + " " + bookName.get(i) + " (" + bookPage.get(i) + ")\n\t\""
+                                        + bookAuthor.get(i) + "\" " + "<" + availability.get(i) + ">");
+                            }
+                        }
+                    }
+                }
+                if (counter == 0) {
+                    System.out.println("\tBook Not Found.");
+                    System.out.println("Press \"#\" To Go Back.");
+                    System.out.print("Enter Command : ");
+                    choice = input.nextLine();
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                    System.out.println("\t\t\t\t\t\t\t    --- Book Added ---");
+                    user();
+                } else {
+                    System.out.println("Press \"#\" To Go Back.");
+                    System.out.println("Enter Book ID To Take It.");
+                    System.out.print("Enter Command : ");
+                    choice = input.nextLine();
+                    if (choice.compareTo("#") == 0) {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                        user();
+                    } else {
+                        for (int i = 0; i < bookName.size(); i++) {
+                            temp = Integer.toString(i);
+                            if (choice.compareTo(temp) == 0) {
+                                availability.set(i, "my");
+                            }
+                        }
+                    }
+                    try {
+                        FileWriter myFile = new FileWriter("booksInfo.txt");
+                        for (int i = 0; i < bookName.size(); i++) {
+                            myFile.write(bookName.get(i) + "\n");
+                            myFile.write(bookAuthor.get(i) + "\n");
+                            myFile.write(bookPage.get(i) + "\n");
+                            myFile.write(availability.get(i) + "\n");
+                        }
+                        myFile.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                    System.out.println("\t\t\t\t\t\t\t    --- Book Added ---");
+                    user();
+                }
                 break;
             case "exit":
-                System.out.println("Exited...");
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                System.out.println("\t\t\t\t\t\t\" Today a reader tomorrow a leader \"");
+                System.exit(1);
                 break;
             default:
                 System.out.print("\033[H\033[2J");
@@ -450,11 +582,15 @@ class home extends data {
         }
 
     }
+
+    void admin() {
+
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
-        new home();
         new data();
+        new home();
     }
 }
