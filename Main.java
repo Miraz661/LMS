@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+
 import java.io.File;
 import java.io.FileWriter;
 
@@ -12,6 +13,9 @@ class data {
     ArrayList<String> bookAuthor = new ArrayList<String>();
     ArrayList<String> availability = new ArrayList<String>();
     ArrayList<String> dataTemp = new ArrayList<String>();
+    ArrayList<String> adminName = new ArrayList<String>();
+    ArrayList<String> adminId = new ArrayList<String>();
+    ArrayList<String> adminPass = new ArrayList<String>();
 
     data() {
         try {
@@ -19,10 +23,17 @@ class data {
             Scanner datasc = new Scanner(dataFile);
             File bookDataFile = new File("booksInfo.txt");
             Scanner bookDatasc = new Scanner(bookDataFile);
+            File adminFile = new File("admins.txt");
+            Scanner adminsc = new Scanner(adminFile);
             while (datasc.hasNext()) {
                 dataId.add(datasc.next());
                 dataName.add(datasc.next());
                 dataPass.add(datasc.next());
+            }
+            while (adminsc.hasNext()) {
+                adminId.add(adminsc.next());
+                adminName.add(adminsc.next());
+                adminPass.add(adminsc.next());
             }
             while (bookDatasc.hasNextLine()) {
                 bookName.add(bookDatasc.nextLine());
@@ -32,6 +43,7 @@ class data {
             }
             datasc.close();
             bookDatasc.close();
+            adminsc.close();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -77,6 +89,10 @@ class home extends data {
                 System.out.flush();
                 System.out.println("\t\t\t\t\t\t\t*** UU Library - Sign Up ***");
                 signup();
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***\n");
+                frontSide();
                 break;
             case "exit":
                 System.out.print("\033[H\033[2J");
@@ -100,8 +116,6 @@ class home extends data {
             Scanner sc1 = new Scanner(file1);
             File file2 = new File("booksInfo.txt");
             Scanner sc2 = new Scanner(file2);
-            File file3 = new File("magazineInfo.txt");
-            Scanner sc3 = new Scanner(file3);
             while (sc1.hasNext()) {
                 lines++;
                 temp = sc1.nextLine();
@@ -112,16 +126,9 @@ class home extends data {
                 lines++;
                 temp = sc2.nextLine();
             }
-            System.out.println("Total Books : " + lines);
-            lines = 0;
-            while (sc3.hasNext()) {
-                lines++;
-                temp = sc3.nextLine();
-            }
-            System.out.println("Total Magazins : " + lines + "\n");
+            System.out.println("Total Books : " + (lines / 3));
             sc1.close();
             sc2.close();
-            sc3.close();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -131,15 +138,15 @@ class home extends data {
         System.out.println("Enter Your ID : ");
         id = input.nextLine();
         counter = 0;
-        for (int i = 0; i < dataId.size(); i++) {
-            if (dataId.get(i).compareTo(id) == 0) {
+        for (int i = 0; i < adminId.size(); i++) {
+            if (adminId.get(i).compareTo(id) == 0) {
                 System.out.println("Enter Your Password : ");
                 pass = input.nextLine();
-                if (dataPass.get(i).compareTo(pass) == 0) {
+                if (adminPass.get(i).compareTo(pass) == 0) {
                     System.out.print("\033[H\033[2J");
                     System.out.flush();
-                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
-                    user();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Admin Panel ***");
+                    admin();
                     break;
                 } else {
                     System.out.print("\033[H\033[2J");
@@ -147,16 +154,40 @@ class home extends data {
                     System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***");
                     System.out.println("\t\t\t\t\t\t  Invalid Password! Try Again...");
                     frontSide();
+                    break;
                 }
             }
             counter++;
         }
-        if (counter >= dataId.size()) {
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***");
-            System.out.println("\t\t\t\t\t\t Invalid User Name! Try Again...");
-            frontSide();
+        if (counter >= adminId.size()) {
+            counter = 0;
+            for (int i = 0; i < dataId.size(); i++) {
+                if (dataId.get(i).compareTo(id) == 0) {
+                    System.out.println("Enter Your Password : ");
+                    pass = input.nextLine();
+                    if (dataPass.get(i).compareTo(pass) == 0) {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                        user();
+                        break;
+                    } else {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***");
+                        System.out.println("\t\t\t\t\t\t  Invalid Password! Try Again...");
+                        frontSide();
+                    }
+                }
+                counter++;
+            }
+            if (counter >= dataId.size()) {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***");
+                System.out.println("\t\t\t\t\t\t Invalid User Name! Try Again...");
+                frontSide();
+            }
         }
     }
 
@@ -187,9 +218,7 @@ class home extends data {
             System.out.flush();
             System.out.println("\t\t\t\t\t\t    *** Welcome To UU Library ***");
             System.out.println("\t\t\t\t\t\t      ---Sign Up Successful---");
-            frontSide();
             fileWriter.close();
-            System.exit(1);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -271,7 +300,8 @@ class home extends data {
                                 nwsc.close();
                                 System.out.print("\033[H\033[2J");
                                 System.out.flush();
-                                System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                                System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
+                                System.out.println("\t\t\t\t\t\t\tName Change Successfully");
                                 user();
                             } catch (Exception e) {
                                 System.out.println(e);
@@ -291,14 +321,14 @@ class home extends data {
                     Scanner sc = new Scanner(file);
                     System.out.print("\033[H\033[2J");
                     System.out.flush();
-                    System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
                     System.out.println("Enter Password : ");
                     temp = input.nextLine();
                     System.out.println(pass);
                     if (temp.compareTo(pass) == 0) {
                         System.out.print("\033[H\033[2J");
                         System.out.flush();
-                        System.out.println("\t\t\t\t\t\t\t*** UU Library ***");
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
                         System.out.println("Enter New Password : ");
                         String tempPass = input.nextLine();
                         System.out.println("Enter Confirm Password : ");
@@ -576,7 +606,7 @@ class home extends data {
             default:
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
-                System.out.println("\t\t\t\t\t\t*** Welcome To UU Library ***");
+                System.out.println("\t\t\t\t\t\t\t*** UU Library-Inventory ***");
                 System.out.println("\t\t\t\t\t\t  Invalid Command ! Try Again...");
                 user();
         }
@@ -584,7 +614,465 @@ class home extends data {
     }
 
     void admin() {
+        System.out.println("Change Name -->\"name\"");
+        System.out.println("Change Password -->\"pass\"");
+        System.out.println("Admin -->\"admin\"");
+        System.out.println("Remove User -->\"user\"");
+        System.out.println("Books -->\"book\"");
+        System.out.println("Go Back -->\"#\"");
+        System.out.println("For Exit -->\"exit\"");
+        System.out.print("Enter Command : ");
+        choice = input.nextLine();
+        switch (choice) {
+            case "name":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.print("Enter Password : ");
+                choice = input.nextLine();
+                if (choice.compareTo(pass) == 0) {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.print("Enter New Name : ");
+                    String tempAdminName = input.nextLine();
+                    System.out.print("Enter Confirm Name : ");
+                    temp = input.nextLine();
+                    if (tempAdminName.compareTo(temp) == 0) {
+                        for (int i = 0; i < adminId.size(); i++) {
+                            if (adminId.get(i).compareTo(id) == 0) {
+                                adminName.set(i, tempAdminName);
+                            }
+                        }
+                        try {
+                            FileWriter adminFile = new FileWriter("admins.txt");
+                            for (int i = 0; i < adminName.size(); i++) {
+                                adminFile.write(adminId.get(i) + " ");
+                                adminFile.write(adminName.get(i) + " ");
+                                adminFile.write(adminPass.get(i) + "\n");
+                            }
+                            adminFile.close();
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                            System.out.println("\t\t\t\t\t\t\tName Change Successfully");
+                            admin();
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } else {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                        System.out.println("\t\t\t\t\t\t\t    Name Dosen't Match.");
+                        admin();
+                    }
+                } else {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
+                    admin();
+                }
+                break;
+            case "pass":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.print("Enter Password : ");
+                choice = input.nextLine();
+                if (choice.compareTo(pass) == 0) {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.print("Enter New Password : ");
+                    String tempAdminName = input.nextLine();
+                    System.out.print("Enter Confirm Password : ");
+                    temp = input.nextLine();
+                    if (tempAdminName.compareTo(temp) == 0) {
+                        for (int i = 0; i < adminId.size(); i++) {
+                            if (adminId.get(i).compareTo(id) == 0) {
+                                adminPass.set(i, tempAdminName);
+                            }
+                        }
+                        try {
+                            FileWriter adminFile = new FileWriter("admins.txt");
+                            for (int i = 0; i < adminPass.size(); i++) {
+                                adminFile.write(adminId.get(i) + " ");
+                                adminFile.write(adminName.get(i) + " ");
+                                adminFile.write(adminPass.get(i) + "\n");
+                            }
+                            adminFile.close();
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                            System.out.println("\t\t\t\t\t\t\tPassword Change Successfully");
+                            admin();
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } else {
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                        System.out.println("\t\t\t\t\t\t\t    Password Dosen't Match.");
+                        admin();
+                    }
+                } else {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
+                    admin();
+                }
+                break;
+            case "admin":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                admin_admin();
+                break;
+            case "user":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Remove User : ");
+                System.out.print("\tEnter Password : ");
+                choice = input.nextLine();
+                if (choice.compareTo(pass) == 0) {
+                    for (int i = 0; i < dataId.size(); i++) {
+                        System.out.println("\tId : " + dataId.get(i) + " Name : " + dataName.get(i));
+                    }
+                    System.out.print("\n\tEnter User Id : ");
+                    choice = input.nextLine();
+                    System.out.print("\tConfirm User Id : ");
+                    temp = input.nextLine();
+                    if (choice.compareTo(temp) == 0) {
+                        for (int i = 0; i < dataId.size(); i++) {
+                            if (dataId.get(i).compareTo(temp) == 0) {
+                                dataId.remove(i);
+                                dataName.remove(i);
+                                dataPass.remove(i);
+                            }
+                        }
+                        try {
+                            FileWriter userFile = new FileWriter("security.txt");
+                            for (int i = 0; i < dataId.size(); i++) {
+                                userFile.write(dataId.get(i) + " ");
+                                userFile.write(dataName.get(i) + " ");
+                                userFile.write(dataPass.get(i) + "\n");
+                            }
+                            userFile.close();
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                            System.out.println("\t\t\t\t\t\t\tUser Removed Successfully");
+                            admin();
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    }
+                }
+                break;
+            case "book":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                admin_book();
+                break;
+            case "#":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                frontSide();
+                break;
+            case "exit":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t\t\" Today a reader tomorrow a leader \"");
+                System.exit(1);
+                break;
+            default:
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t  Invalid Command ! Try Again...");
+                admin();
+        }
+    }
 
+    void admin_admin() {
+        String newAdminId, newAdminName, newAdminPass;
+        System.out.println("Admin : ");
+        System.out.println("\tAdd Admin -->\"add\"");
+        System.out.println("\tRemove Admin -->\"remove\"");
+        System.out.println("\tGo Back -->\"#\"");
+        System.out.println("\tTo Close -->\"exit\"");
+        System.out.print("\tEnter Command : ");
+        choice = input.nextLine();
+        switch (choice) {
+            case "add":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Admin : ");
+                System.out.print("\tEnter Password : ");
+                choice = input.nextLine();
+                if (choice.compareTo(pass) == 0) {
+                    System.out.print("\tEnter New Admin ID : ");
+                    newAdminId = input.nextLine();
+                    adminId.add(newAdminId);
+                    System.out.print("\tEnter New Admin Name : ");
+                    newAdminName = input.nextLine();
+                    adminName.add(newAdminName);
+                    System.out.print("\tEnter New Admin Password : ");
+                    newAdminPass = input.nextLine();
+                    adminPass.add(newAdminPass);
+                    try {
+                        FileWriter adminFile = new FileWriter("admins.txt");
+                        for (int i = 0; i < adminPass.size(); i++) {
+                            adminFile.write(adminId.get(i) + " ");
+                            adminFile.write(adminName.get(i) + " ");
+                            adminFile.write(adminPass.get(i) + "\n");
+                        }
+                        adminFile.close();
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                        System.out.println("\t\t\t\t\t\t\tAdmin Added Successfully");
+                        admin_admin();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                } else {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
+                    admin_admin();
+                }
+                break;
+            case "remove":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Admin : ");
+                System.out.print("\tEnter Password : ");
+                choice = input.nextLine();
+                if (choice.compareTo(pass) == 0) {
+                    System.out.print("\tEnter Admin ID : ");
+                    newAdminId = input.nextLine();
+                    System.out.print("\tEnter Confirm ID : ");
+                    temp = input.nextLine();
+                    if (newAdminId.compareTo(temp) == 0) {
+                        for (int i = 0; i < adminId.size(); i++) {
+                            if (adminId.get(i).compareTo(temp) == 0) {
+                                adminId.remove(i);
+                                adminName.remove(i);
+                                adminPass.remove(i);
+                            }
+                        }
+                    }
+                    try {
+                        FileWriter adminFile = new FileWriter("admins.txt");
+                        for (int i = 0; i < adminPass.size(); i++) {
+                            adminFile.write(adminId.get(i) + " ");
+                            adminFile.write(adminName.get(i) + " ");
+                            adminFile.write(adminPass.get(i) + "\n");
+                        }
+                        adminFile.close();
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                        System.out.println("\t\t\t\t\t\t\tAdmin Removed Successfully");
+                        admin();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                } else {
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
+                    admin_admin();
+                }
+                break;
+            case "#":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                admin();
+                break;
+            case "exit":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t\" Today a reader tomorrow a leader \"");
+                System.exit(1);
+                break;
+            default:
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t  Invalid Command ! Try Again...");
+                admin_admin();
+        }
+    }
+
+    void admin_book() {
+        String bName, bauthor, bPage;
+        System.out.println("Book : ");
+        System.out.println("\tView Books -->\"view\"");
+        System.out.println("\tAdd Book -->\"add\"");
+        System.out.println("\tRemove Book -->\"remove\"");
+        System.out.println("\tChange Book Avaiability -->\"validity\"");
+        System.out.println("\tGo Back -->\"#\"");
+        System.out.println("\tExit -->\"exit\"");
+        System.out.print("\tEnter Command : ");
+        choice = input.nextLine();
+        switch (choice) {
+            case "view":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Book : ");
+                System.out.println("\t\t\t\t\t\t\t--- All Books ---");
+                for(int i=0;i<bookName.size();i++){
+                    System.out.print("\tBook Name : \""+bookName.get(i)+"\"\tNumber Of Page : \""+bookPage.get(i)+"\"\n\tAuthor : \""+bookAuthor.get(i)+"\"");
+                    if(availability.get(i).compareTo("available")==0){
+                        System.out.println("\tAvailability : \"available\"");
+                    }else{
+                        System.out.println("\tAvailability : \"unavailable\"");
+                    }
+                }
+                System.out.print("Press # To Go Back : ");
+                choice = input.nextLine();
+                admin_book();
+                break;
+            case "add":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Book : ");
+                System.out.print("\tEnter Book Name : ");
+                bName = input.nextLine();
+                bookName.add(bName);
+                System.out.print("\tEnter Book Author Name : ");
+                bauthor = input.nextLine();
+                bookAuthor.add(bauthor);
+                System.out.print("\tEnter Total Book Page : ");
+                bPage = input.nextLine();
+                bookPage.add(bPage);
+                availability.add("available");
+                try {
+                    FileWriter adminBookFile = new FileWriter("booksInfo.txt");
+                    for (int i = 0; i < bookName.size(); i++) {
+                        adminBookFile.write(bookName.get(i) + "\n");
+                        adminBookFile.write(bookAuthor.get(i) + "\n");
+                        adminBookFile.write(bookPage.get(i) + "\n");
+                        adminBookFile.write(availability.get(i) + "\n");
+                    }
+                    adminBookFile.close();
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\tBook Added Successfully");
+                    admin_book();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                break;
+            case "remove":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Book : ");
+                System.out.print("\tEnter Book Name : ");
+                choice = input.nextLine();
+                choice = choice.toLowerCase();
+                for (int i = 0; i < bookName.size(); i++) {
+                    temp = bookName.get(i).toLowerCase();
+                    if (choice.compareTo(temp) == 0) {
+                        bookName.remove(i);
+                        bookAuthor.remove(i);
+                        bookPage.remove(i);
+                        availability.remove(i);
+                        System.out.println("remove");
+                    }
+                }
+                try {
+                    FileWriter adminBookFile = new FileWriter("booksInfo.txt");
+                    for (int i = 0; i < bookName.size(); i++) {
+                        adminBookFile.write(bookName.get(i) + "\n");
+                        adminBookFile.write(bookAuthor.get(i) + "\n");
+                        adminBookFile.write(bookPage.get(i) + "\n");
+                        adminBookFile.write(availability.get(i) + "\n");
+                    }
+                    adminBookFile.close();
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\tBook Removed Successfully");
+                    admin_book();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                break;
+            case "validity":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("Book : ");
+                System.out.print("\tEnter Book Name : ");
+                choice = input.nextLine();
+                choice = choice.toLowerCase();
+                for (int i = 0; i < bookName.size(); i++) {
+                    temp = bookName.get(i).toLowerCase();
+                    if (choice.compareTo(temp) == 0) {
+                        System.out.print("\tEnter validity Mode(unavailable/available) : ");
+                        choice = input.nextLine();
+                        availability.set(i, choice);
+                    }
+                }
+                try {
+                    FileWriter adminBookFile = new FileWriter("booksInfo.txt");
+                    for (int i = 0; i < bookName.size(); i++) {
+                        adminBookFile.write(bookName.get(i) + "\n");
+                        adminBookFile.write(bookAuthor.get(i) + "\n");
+                        adminBookFile.write(bookPage.get(i) + "\n");
+                        adminBookFile.write(availability.get(i) + "\n");
+                    }
+                    adminBookFile.close();
+                    System.out.print("\033[H\033[2J");
+                    System.out.flush();
+                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                    System.out.println("\t\t\t\t\t\t\tAvailability Changed Successfully");
+                    admin_book();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                break;
+            case "#":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                admin();
+                break;
+            case "exit":
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t\" Today a reader tomorrow a leader \"");
+                System.exit(1);
+                break;
+            default:
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                System.out.println("\t\t\t\t\t\t  Invalid Command ! Try Again...");
+                admin_book();
+        }
     }
 }
 
