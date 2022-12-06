@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-
 import java.io.File;
 import java.io.FileWriter;
 
@@ -118,13 +117,11 @@ class home extends data {
             Scanner sc2 = new Scanner(file2);
             while (sc1.hasNext()) {
                 lines++;
-                temp = sc1.nextLine();
             }
             System.out.println("Total Users : " + dataId.size());
             lines = 0;
             while (sc2.hasNext()) {
                 lines++;
-                temp = sc2.nextLine();
             }
             System.out.println("Total Books : " + (lines / 3));
             sc1.close();
@@ -819,38 +816,42 @@ class home extends data {
                 System.out.println("Admin : ");
                 System.out.print("\tEnter Password : ");
                 choice = input.nextLine();
-                if (choice.compareTo(pass) == 0) {
-                    System.out.print("\tEnter New Admin ID : ");
-                    newAdminId = input.nextLine();
-                    adminId.add(newAdminId);
-                    System.out.print("\tEnter New Admin Name : ");
-                    newAdminName = input.nextLine();
-                    adminName.add(newAdminName);
-                    System.out.print("\tEnter New Admin Password : ");
-                    newAdminPass = input.nextLine();
-                    adminPass.add(newAdminPass);
-                    try {
-                        FileWriter adminFile = new FileWriter("admins.txt");
-                        for (int i = 0; i < adminPass.size(); i++) {
-                            adminFile.write(adminId.get(i) + " ");
-                            adminFile.write(adminName.get(i) + " ");
-                            adminFile.write(adminPass.get(i) + "\n");
+                for(int j=0;j<adminId.size();j++){
+                    if(adminId.get(j).compareTo(id)==0){
+                        if (choice.compareTo(adminPass.get(j)) == 0) {
+                            System.out.print("\tEnter New Admin ID : ");
+                            newAdminId = input.nextLine();
+                            adminId.add(newAdminId);
+                            System.out.print("\tEnter New Admin Name : ");
+                            newAdminName = input.nextLine();
+                            adminName.add(newAdminName);
+                            System.out.print("\tEnter New Admin Password : ");
+                            newAdminPass = input.nextLine();
+                            adminPass.add(newAdminPass);
+                            try {
+                                FileWriter adminFile = new FileWriter("admins.txt");
+                                for (int i = 0; i < adminPass.size(); i++) {
+                                    adminFile.write(adminId.get(i) + " ");
+                                    adminFile.write(adminName.get(i) + " ");
+                                    adminFile.write(adminPass.get(i) + "\n");
+                                }
+                                adminFile.close();
+                                System.out.print("\033[H\033[2J");
+                                System.out.flush();
+                                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                                System.out.println("\t\t\t\t\t\t\tAdmin Added Successfully");
+                                admin_admin();
+                            } catch (Exception e) {
+                                System.out.println(e);
+                            }
+                        } else {
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                            System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
+                            admin_admin();
                         }
-                        adminFile.close();
-                        System.out.print("\033[H\033[2J");
-                        System.out.flush();
-                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
-                        System.out.println("\t\t\t\t\t\t\tAdmin Added Successfully");
-                        admin_admin();
-                    } catch (Exception e) {
-                        System.out.println(e);
                     }
-                } else {
-                    System.out.print("\033[H\033[2J");
-                    System.out.flush();
-                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
-                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
-                    admin_admin();
                 }
                 break;
             case "remove":
@@ -860,42 +861,47 @@ class home extends data {
                 System.out.println("Admin : ");
                 System.out.print("\tEnter Password : ");
                 choice = input.nextLine();
-                if (choice.compareTo(pass) == 0) {
-                    System.out.print("\tEnter Admin ID : ");
-                    newAdminId = input.nextLine();
-                    System.out.print("\tEnter Confirm ID : ");
-                    temp = input.nextLine();
-                    if (newAdminId.compareTo(temp) == 0) {
-                        for (int i = 0; i < adminId.size(); i++) {
-                            if (adminId.get(i).compareTo(temp) == 0) {
-                                adminId.remove(i);
-                                adminName.remove(i);
-                                adminPass.remove(i);
+                for(int j=0;j<adminId.size();j++){
+                    if(adminId.get(j).compareTo(id)==0){
+                        if (choice.compareTo(adminPass.get(j)) == 0) {
+                            System.out.print("\tEnter Admin ID : ");
+                            newAdminId = input.nextLine();
+                            System.out.print("\tEnter Confirm ID : ");
+                            temp = input.nextLine();
+                            if (newAdminId.compareTo(temp) == 0) {
+                                pass=temp;
+                                for (int i = 0; i < adminId.size(); i++) {
+                                    if (adminId.get(i).compareTo(temp) == 0) {
+                                        adminId.remove(i);
+                                        adminName.remove(i);
+                                        adminPass.remove(i);
+                                    }
+                                }
                             }
+                            try {
+                                FileWriter adminFile = new FileWriter("admins.txt");
+                                for (int i = 0; i < adminPass.size(); i++) {
+                                    adminFile.write(adminId.get(i) + " ");
+                                    adminFile.write(adminName.get(i) + " ");
+                                    adminFile.write(adminPass.get(i) + "\n");
+                                }
+                                adminFile.close();
+                                System.out.print("\033[H\033[2J");
+                                System.out.flush();
+                                System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                                System.out.println("\t\t\t\t\t\t\tAdmin Removed Successfully");
+                                admin();
+                            } catch (Exception e) {
+                                System.out.println(e);
+                            }
+                        } else {
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
+                            System.out.println("\t\t\t\t\t\t\t    Incorrect Password."+pass);
+                            admin_admin();
                         }
                     }
-                    try {
-                        FileWriter adminFile = new FileWriter("admins.txt");
-                        for (int i = 0; i < adminPass.size(); i++) {
-                            adminFile.write(adminId.get(i) + " ");
-                            adminFile.write(adminName.get(i) + " ");
-                            adminFile.write(adminPass.get(i) + "\n");
-                        }
-                        adminFile.close();
-                        System.out.print("\033[H\033[2J");
-                        System.out.flush();
-                        System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
-                        System.out.println("\t\t\t\t\t\t\tAdmin Removed Successfully");
-                        admin();
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                } else {
-                    System.out.print("\033[H\033[2J");
-                    System.out.flush();
-                    System.out.println("\t\t\t\t\t\t\t*** UU Library Admin Panel ***");
-                    System.out.println("\t\t\t\t\t\t\t    Incorrect Password.");
-                    admin_admin();
                 }
                 break;
             case "#":
